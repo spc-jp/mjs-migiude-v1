@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <!-- スマホ操作に最適化: user-scalable=noはアプリらしさを出すため維持しつつ、視認性を考慮 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>繁盛の右腕 | MJS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- MJSブランドカラー設定 --- */
+        :root {
+            --bg-color: #0a1a0a;
+            --card-bg: #1a1a1a;
+            --main-red: #B31200;
+            --accent-gold: #DCBC59;
+            --text-white: #ffffff;
+            --text-gray: #cccccc;
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+        html { scroll-behavior: smooth; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            height: 100vh;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        
+        /* --- ヘッダー --- */
+        header {
+            background: linear-gradient(to right, #000, #111);
+            padding: 10px 15px;
+            border-bottom: 2px solid var(--accent-gold);
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: space-between;
+            height: auto; min-height: 80px;
+            z-index: 10;
+        }
+        
+        .header-logo { 
+            width: 90px; height: auto; max-height: 55px; object-fit: contain;
+            cursor: pointer; flex-shrink: 0; margin-right: 10px;
+            background: #fff; padding: 2px; border-radius: 4px;
+        }
+
+        .header-center {
+            flex-grow: 1; text-align: left; display: flex; flex-direction: column; justify-content: center;
+            overflow: hidden; /* はみ出し防止 */
+        }
+
+        .app-catch {
+            /* 改善: 文字サイズを上げて視認性向上 */
+            font-size: 0.7rem; color: var(--accent-gold); display: block;
+            margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .app-name {
+            font-size: 1.2rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: 0.05em;
+        }
+
+        .header-icons { display: flex; align-items: center; gap: 12px; } /* 改善: アイコン間隔を広げる */
+
+        .icon-btn { 
+            font-size: 1.6rem; cursor: pointer; color: var(--text-gray); 
+            background: none; border: none; padding: 0; flex-shrink: 0; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .icon-btn:active { transform: scale(0.9); color: #fff; }
+
+        .guide-btn { animation: softPulse 3s infinite; }
+        @keyframes softPulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); text-shadow: 0 0 10px var(--accent-gold); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+        
+        /* メイン */
+        main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; -webkit-overflow-scrolling: touch; }
+        
+        /* コンポーネント */
+        .tab-content { display: none; animation: fadeIn 0.25s ease-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h2.tab-title {
+            font-size: 1.3rem; margin-bottom: 20px; 
+            border-left: 5px solid var(--main-red); padding-left: 12px;
+            letter-spacing: 0.05em; line-height: 1.4;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px; padding: 20px; margin-bottom: 20px;
+            border-left: 4px solid var(--accent-gold);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            /* 改善: スクロール時の見切れ防止 */
+            scroll-margin-top: 100px; 
+        }
+        .card h3 { font-size: 1.1rem; margin-bottom: 15px; color: var(--accent-gold); display: flex; align-items: center; gap: 8px; font-weight: 700; }
+        .card h4 { font-size: 1rem; color: #fff; margin-top: 25px; margin-bottom: 12px; border-bottom: 1px solid #444; padding-bottom: 6px; }
+
+        /* 入力エリア・ボタン */
+        .select-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        /* 改善: スマホでのタップ領域確保のためpadding調整 */
+        .select-box { 
+            width: 100%; padding: 14px; background: #333; color: #fff; 
+            border: 1px solid #555; border-radius: 8px; font-size: 1rem; 
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23DCBC59%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 12px;
+        }
+        
+        .result-area { background: #000; padding: 15px; border-radius: 8px; border: 1px dashed #555; min-height: 120px; margin-bottom: 15px; font-size: 1rem; line-height: 1.6; white-space: pre-wrap; }
+        
+        .copy-btn { 
+            width: 100%; background-color: var(--main-red); color: white; border: none; 
+            padding: 16px; border-radius: 50px; font-weight: bold; font-size: 1.1rem; 
+            cursor: pointer; box-shadow: 0 4px 15px rgba(179, 18, 0, 0.5); 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .copy-btn:active { transform: scale(0.97); box-shadow: 0 2px 5px rgba(179, 18, 0, 0.5); }
+
+        /* アコーディオン（共通） */
+        .accordion-item { border-bottom: 1px solid #333; margin-bottom: 5px; }
+        .accordion-header { 
+            padding: 18px 5px; font-weight: bold; cursor: pointer; 
+            display: flex; justify-content: space-between; align-items: center; font-size: 1rem; 
+        }
+        .accordion-header::after { content: '+'; color: var(--accent-gold); font-size: 1.4rem; font-weight: 300; }
+        .accordion-header.open::after { content: '-'; }
+        .accordion-body { display: none; padding: 10px 15px 20px 15px; color: var(--text-gray); font-size: 0.95rem; border-left: 2px solid #555; margin-top: 5px; line-height: 1.7; }
+        
+        /* SNSプラットフォーム選択ボタン */
+        .sns-platform-selector {
+            display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;
+        }
+        .sns-btn {
+            flex: 1; min-width: 70px; padding: 10px 5px; border-radius: 8px; border: 1px solid #444;
+            background: #222; color: #888; text-align: center; cursor: pointer; font-size: 0.8rem; font-weight: bold;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+            transition: 0.2s;
+        }
+        .sns-btn.hidden { display: none !important; } /* 非表示用クラス */
+        
+        .sns-btn.active {
+            border-color: var(--accent-gold); color: #fff; background: rgba(220, 188, 89, 0.1);
+        }
+        .sns-btn i { font-style: normal; font-size: 1.2rem; }
+        /* ブランドカラー風 */
+        .sns-btn[data-sns="instagram"].active { border-color: #E1306C; background: rgba(225, 48, 108, 0.2); }
+        .sns-btn[data-sns="facebook"].active { border-color: #1877F2; background: rgba(24, 119, 242, 0.2); }
+        .sns-btn[data-sns="x"].active { border-color: #fff; background: rgba(255, 255, 255, 0.1); }
+        .sns-btn[data-sns="line"].active { border-color: #06C755; background: rgba(6, 199, 85, 0.2); }
+
+        /* 設定のチェックボックススタイル */
+        .checkbox-group { display: flex; flex-direction: column; gap: 10px; background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        .checkbox-item { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 5px 0; }
+        .checkbox-item input[type="checkbox"] { transform: scale(1.5); accent-color: var(--main-red); }
+        .checkbox-label { color: #fff; font-size: 1rem; margin-left: 10px; flex-grow: 1; }
+
+        /* 撮影テクニック */
+        .photo-tips-btn {
+            background: linear-gradient(135deg, #2c2c2c, #1a1a1a); color: #fff;
+            padding: 18px; border-radius: 8px; border: 1px solid var(--accent-gold);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; margin-top: 30px; transition: 0.2s; font-size: 1rem;
+        }
+        .photo-tips-content { display: none; margin-top: 15px; animation: fadeIn 0.3s; }
+        .photo-tips-content.open { display: block; }
+        
+        .tip-box { margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; }
+        .tip-title { color: var(--accent-gold); font-weight: bold; border-bottom: 1px dashed #555; padding-bottom: 5px; margin-bottom: 10px; display: block; }
+        .tip-list li { margin-bottom: 12px; font-size: 0.95rem; line-height: 1.6; }
+
+        /* 接客定義（カード形式） */
+        .definition-card {
+            background: #2a2a2a; padding: 18px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #444; cursor: pointer; transition: 0.2s;
+        }
+        .definition-card:active { transform: scale(0.98); background: #333; }
+        .def-title { font-weight: bold; color: #fff; font-size: 1.05rem; margin-bottom: 5px; display: block; }
+        .def-desc { font-size: 0.9rem; color: #ccc; line-height: 1.6; display: none; margin-top: 12px; border-top: 1px dashed #555; padding-top: 10px;}
+        .def-title::before { content: "● "; color: var(--main-red); }
+        .definition-card.open .def-desc { display: block; }
+
+        /* 接客タブ内のサブナビゲーション */
+        .talk-nav { display: flex; gap: 8px; margin-bottom: 25px; background: #111; padding: 5px; border-radius: 50px; border: 1px solid #333; }
+        .talk-nav-btn {
+            flex: 1; padding: 10px 0; text-align: center; color: #888;
+            border-radius: 40px; font-weight: bold; font-size: 0.9rem; cursor: pointer;
+            transition: 0.3s;
+        }
+        .talk-nav-btn.active {
+            background: var(--main-red); color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .talk-sub-content { display: none; animation: fadeIn 0.3s ease; }
+        .talk-sub-content.active { display: block; }
+
+        /* クエスト機能 */
+        .quest-box {
+            text-align: center; padding: 30px 20px; background: radial-gradient(circle, #333, #111);
+            border: 2px solid var(--accent-gold); border-radius: 12px; margin-top: 20px;
+            position: relative; overflow: hidden;
+        }
+        .quest-title { color: var(--accent-gold); font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; display: block; letter-spacing: 0.1em; }
+        .quest-text { font-size: 1.4rem; font-weight: 900; color: #fff; min-height: 100px; display: flex; align-items: center; justify-content: center; line-height: 1.4; padding: 0 10px; }
+        .quest-btn {
+            background: var(--accent-gold); color: #000; font-weight: 900; padding: 16px 40px;
+            border-radius: 50px; border: none; font-size: 1.1rem; margin-top: 20px; cursor: pointer;
+            box-shadow: 0 0 15px rgba(220, 188, 89, 0.4); transition: 0.2s; width: 100%;
+        }
+        .quest-btn:active { transform: scale(0.95); }
+
+        /* ヒントナビ */
+        .hint-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .hint-nav-item {
+            flex: 1 1 30%; text-decoration: none; color: #fff; background: #222;
+            padding: 12px 5px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            border: 1px solid #444; transition: transform 0.1s;
+        }
+        .hint-nav-item:active { transform: scale(0.96); background: #333; }
+        .hint-nav-title { font-weight: bold; font-size: 0.9rem; margin-bottom: 2px; }
+        .hint-nav-desc { font-size: 0.7rem; color: #aaa; }
+        
+        .nav-cat-a { border-top: 3px solid #ff9999; } .nav-cat-b { border-top: 3px solid #99ccff; }
+        .nav-cat-c { border-top: 3px solid #99ff99; } .nav-cat-d { border-top: 3px solid #ffff99; }
+        .nav-cat-e { border-top: 3px solid #e6ccff; } .nav-cat-f { border-top: 3px solid #ffcc99; }
+
+        .category-tag { display: inline-block; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; margin-right: 8px; color: #000; font-weight: bold; vertical-align: middle; }
+        .cat-a { background-color: #ff9999; } .cat-b { background-color: #99ccff; } .cat-c { background-color: #99ff99; }
+        .cat-d { background-color: #ffff99; } .cat-e { background-color: #e6ccff; } .cat-f { background-color: #ffcc99; }
+
+        /* チームタブ */
+        .quote-box {
+            font-family: serif; font-style: italic; text-align: center; font-size: 1.1rem;
+            padding: 25px 15px; border: 1px solid var(--accent-gold);
+            border-radius: 8px; background: rgba(220, 188, 89, 0.05); margin-bottom: 20px; line-height: 1.8;
+        }
+        .rule-item { display: flex; align-items: start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #444; }
+        .rule-num {
+            background: var(--main-red); color: #fff; width: 28px; height: 28px;
+            border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.9rem;
+            font-weight: bold; margin-right: 12px; flex-shrink: 0; margin-top: 2px;
+        }
+        .rule-content strong { color: #fff; display: block; margin-bottom: 6px; font-size: 1.05rem; }
+        .rule-content p { color: var(--text-gray); font-size: 0.95rem; line-height: 1.6; margin: 0; }
+
+        /* QR・Info */
+        .qr-container { text-align: center; background: #fff; padding: 30px 20px; border-radius: 12px; margin-top: 15px; }
+        .qr-container img { width: 100%; max-width: 240px; height: auto; display: block; margin: 0 auto; }
+        .qr-note { color: #333; font-weight: bold; margin-bottom: 15px; display: block; font-size: 1.1rem; }
+        
+        .info-link-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; background: linear-gradient(135deg, #222, #333); color: #fff; text-decoration: none; padding: 18px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #444; transition: all 0.2s; }
+        .info-link-btn:active { background: #333; border-color: var(--accent-gold); }
+        .info-title { font-weight: bold; font-size: 1rem; }
+        .info-icon { color: var(--accent-gold); }
+
+        /* ボトムナビ（改善版：5つに制限、余白確保） */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background-color: rgba(0,0,0,0.95); 
+            border-top: 1px solid #333;
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between;
+            padding-bottom: max(5px, var(--safe-area-bottom));
+            height: calc(60px + var(--safe-area-bottom));
+            z-index: 100;
+        }
+        .nav-item { 
+            flex: 1; /* 均等割り */
+            color: #666; text-align: center; font-size: 0.7rem; /* 視認性UP */
+            cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 8px 0;
+            transition: color 0.2s;
+        }
+        .nav-item.active { color: var(--accent-gold); }
+        .nav-item.active .nav-icon { transform: scale(1.1); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nav-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+
+        /* モーダル共通 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 200; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s; }
+        .modal-overlay.show { opacity: 1; }
+        .modal-content { 
+            background: var(--card-bg); padding: 25px; border-radius: 16px; 
+            width: 90%; max-width: 400px; border: 1px solid var(--accent-gold); 
+            text-align: left; max-height: 85vh; overflow-y: auto; 
+            transform: scale(0.95); transition: transform 0.2s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .modal-overlay.show .modal-content { transform: scale(1); }
+
+        .modal-title { margin-bottom: 20px; color: var(--accent-gold); font-weight: bold; text-align: center; font-size: 1.3rem; border-bottom: 1px solid #444; padding-bottom: 15px; }
+        
+        /* 設定モーダル */
+        .setting-section { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .setting-label { display: block; font-size: 0.9rem; color: #aaa; margin-bottom: 8px; font-weight: bold; }
+        /* 改善: 入力エリアを大きく */
+        .input-field { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #555; color: #fff; border-radius: 8px; font-size: 1rem; }
+        .input-field:focus { border-color: var(--accent-gold); outline: none; }
+        .save-btn { background: var(--main-red); color: #fff; border: none; padding: 14px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-size: 1rem; }
+        .close-modal { margin-top: 15px; background: none; border: none; color: #999; text-decoration: underline; cursor: pointer; width: 100%; text-align: center; padding: 10px; font-size: 1rem; }
+        
+        .demo-area { margin-top: 30px; padding-top: 15px; border-top: 1px dashed #444; text-align: center; }
+        .demo-link { display: inline-block; font-size: 0.85rem; color: #666; margin: 0 10px; cursor: pointer; text-decoration: none; padding: 5px; }
+        
+        /* トースト */
+        #toast { visibility: hidden; min-width: 250px; background-color: rgba(255,255,255,0.95); color: #000; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 300; left: 50%; bottom: 100px; transform: translateX(-50%); font-size: 0.95rem; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 110px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="rogo.jpg" alt="MJS" id="header-logo-img" class="header-logo" onclick="resetApp()" onerror="this.src='//placehold.co/200x120/white/black?text=LOGO'">
+        <div class="header-center">
+            <span class="app-catch">お貸しするのは、マシンではなく『繁盛』</span>
+            <span class="app-name">繁盛の右腕</span>
+        </div>
+        <div class="header-icons">
+            <button class="icon-btn" onclick="openInfoModal()" title="リンク集">ℹ️</button>
+            <button class="icon-btn guide-btn" onclick="openGuide()" title="ガイド">📖</button>
+            <button class="icon-btn" onclick="openSettings()" title="設定">⚙️</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- SNSタブ -->
+        <div id="tab-sns" class="tab-content active">
+            <h2 class="tab-title">SNS投稿メーカー</h2>
+            
+            <div class="card">
+                <h3>📢 投稿するSNSを選択</h3>
+                <div class="sns-platform-selector">
+                    <div class="sns-btn active" data-sns="instagram" onclick="selectSns('instagram', this)">
+                        <i>📷</i>Instagram
+                    </div>
+                    <div class="sns-btn" data-sns="facebook" onclick="selectSns('facebook', this)">
+                        <i>📘</i>Facebook
+                    </div>
+                    <div class="sns-btn" data-sns="x" onclick="selectSns('x', this)">
+                        <i>✖</i>X
+                    </div>
+                    <div class="sns-btn" data-sns="line" onclick="selectSns('line', this)">
+                        <i>💬</i>LINE
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🎯 目的で選ぶ</h3>
+                <p style="font-size:0.9rem; color:#aaa; margin-bottom:12px;">今、この瞬間の目的に合わせて選びましょう。</p>
+                <select id="sns-select-purpose" class="select-box" onchange="generateSns('purpose')">
+                    <option value="">▼ 投稿の目的を選択</option>
+                    <option value="empathy">🥺 共感・日常（ファン作り）</option>
+                    <option value="problem">🆘 お悩み解決（新規集客）</option>
+                    <option value="offer">📢 直球オファー（売上直結）</option>
+                </select>
+            </div>
+
+            <div class="card">
+                <h3>📅 季節の投稿（月別）</h3>
+                <div class="select-group">
+                    <select id="month-select" class="select-box" onchange="updateMonthPosts()" style="width:35%; flex-shrink: 0;">
+                        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option><option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option><option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                    <select id="sns-select-month" class="select-box" onchange="generateSns('month')" style="width:65%;">
+                        <option value="">▼ 投稿を選択</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📌 定番シチュエーション</h3>
+                <select id="sns-select-basic" class="select-box" onchange="generateSns('basic')">
+                    <option value="">▼ 投稿内容を選択</option>
+                    <option value="new">🎯 導入しました！（最初の一歩）</option>
+                    <option value="rain">☔ 雨の日（雨宿り訴求）</option>
+                    <option value="weekend">🔥 金曜・週末（盛り上げ）</option>
+                    <option value="empty">🍃 暇なとき（スタッフ対戦）</option>
+                    <option value="event">🏆 イベント告知（大会）</option>
+                </select>
+            </div>
+
+            <div class="card" style="border-left-color: #555;">
+                <h4>作成された投稿文</h4>
+                <div class="result-area" id="sns-result">（ここに生成された文章が表示されます）</div>
+                <button class="copy-btn" onclick="copyText()">
+                    <span>📋</span> 文章をコピーする
+                </button>
+            </div>
+
+            <div class="photo-tips-btn" onclick="togglePhotoTips()">
+                ✨ スマホ1つでプロ級！撮影のコツ
+            </div>
+            
+            <div id="photo-tips-content" class="photo-tips-content">
+                <div class="tip-box">
+                    <span class="tip-title">🔰 基本：まずはここから！</span>
+                    <ul class="tip-list">
+                        <li><strong>🧼 レンズを拭く</strong><br>基本中の基本！撮影前に服でサッと拭くだけで、ボヤけた写真がクリアになります。</li>
+                        <li><strong>📏 「グリッド線」を出す</strong><br>スマホの設定で「グリッド」をONに。水平・垂直を合わせるだけでプロっぽく安定します。</li>
+                        <li><strong>☀️ 自然光が最強</strong><br>店内の照明より、昼間の窓際や自然光が一番キレイに撮れます。</li>
+                    </ul>
+                </div>
+                <div class="tip-box">
+                    <span class="tip-title">🖼 写真：思わずイイネしたくなる</span>
+                    <ul class="tip-list">
+                        <li><strong>🍹 ドリンクは「逆光」で</strong><br>グラスの後ろから光が当たるように撮ると、液体がキラキラ輝いて美味しそうに見えます。</li>
+                        <li><strong>🍝 料理は「斜め45度」</strong><br>真上からより、食べる人の目線（斜め45度）から寄って撮ると、シズル感（迫力）が出ます。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 接客タブ -->
+        <div id="tab-talk" class="tab-content">
+            <h2 class="tab-title">接客のプロ意識・技術</h2>
+            <div class="talk-nav">
+                <div class="talk-nav-btn active" onclick="switchTalkSub('mind', this)">心得</div>
+                <div class="talk-nav-btn" onclick="switchTalkSub('words', this)">言葉</div>
+                <div class="talk-nav-btn" onclick="switchTalkSub('quest', this)">挑戦</div>
+            </div>
+            <div id="talk-sub-mind" class="talk-sub-content active">
+                <div class="card">
+                    <h3>💎 繁盛店を作る「接客の正体」</h3>
+                    <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;">タップして詳細を確認。日々の朝礼や意識付けに。</p>
+                    <div class="definition-card" onclick="toggleDef(this)"><span class="def-title">1. 接客とは、「演技」である。</span><div class="def-desc">カウンターに入ったら、あなたは「キャスト（演者）」です。プライベートは関係ない。最高の「楽しい時間」を演じきってください。</div></div>
+                    <div class="definition-card" onclick="toggleDef(this)"><span class="def-title">2. 接客とは、「観察」である。</span><div class="def-desc">グラスだけでなく「感情」を見ます。「暇そう？」「話したそう？」。心の渇きに気づくのがプロです。</div></div>
+                    <div class="definition-card" onclick="toggleDef(this)"><span class="def-title">3. 接客とは、「空気」を操ること。</span><div class="def-desc">盛り上がっている時は上げ、引いている時は下げる。DJのように空間の空気をコントロールします。</div></div>
+                    <div class="definition-card" onclick="toggleDef(this)"><span class="def-title">4. 接客とは、「お節介」である。</span><div class="def-desc">言われたことをやるのは作業。「対戦しませんか？」と声をかけ、他のお客様と繋げるお節介が常連を作ります。</div></div>
+                    <div class="definition-card" onclick="toggleDef(this)"><span class="def-title">5. 接客とは、「記憶」に残ること。</span><div class="def-desc">「あの投げ方カッコよかったです」の一言が記憶にフックをかけ、再来店の動機になります。</div></div>
+                </div>
+            </div>
+            <div id="talk-sub-words" class="talk-sub-content">
+                <div class="card">
+                    <h3>🗣 今日から使える「魔法の言葉」</h3>
+                    <h4>❤️ 【ファン化】心をつかむ（誠意）</h4>
+                    <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">2回目のお客様へ</div><div class="accordion-body">「いらっしゃいませ！あ、おかえりなさい！」<br><small>※「また来た」ではなく「帰ってきた」と思わせる</small></div></div>
+                    <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">応援の一言</div><div class="accordion-body">「ここ一番！決めてください、応援してます！」</div></div>
+                    <h4>💰 【売上】注文が止まらない</h4>
+                    <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">ドリンクを賭けた勝負</div><div class="accordion-body">「勝者が敗者に奢らせる『紳士のルール』でやりませんか？（笑）」</div></div>
+                    <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">おかわり確認</div><div class="accordion-body">「集中すると喉乾きますよね？ガソリン（お酒）補充しますか？」</div></div>
+                </div>
+            </div>
+            <div id="talk-sub-quest" class="talk-sub-content">
+                <div class="card">
+                    <h3>🎮 本日の接客クエスト</h3>
+                    <p style="color:#ccc;">ボタンを押すと「今日のミッション」が出現。<br>ゲーム感覚で接客を楽しもう！</p>
+                    <div class="quest-box">
+                        <span class="quest-title">MISSION START</span>
+                        <div id="quest-display" class="quest-text">？？？</div>
+                        <button class="quest-btn" onclick="drawQuest()">クエストを受注する</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- チームタブ -->
+        <div id="tab-team" class="tab-content">
+            <h2 class="tab-title">チーム・心得</h2>
+            <div class="card">
+                <h3>🎯 ダーツの魅力とは？</h3>
+                <div class="quote-box">
+                    「世界で一番、初対面の人と<br>仲良くなれる魔法の道具」
+                </div>
+                <p style="font-size:0.95rem; line-height:1.7;">スポーツだけど、ガチすぎない。<br>言葉がなくても、一緒に投げて「ナイス！」とハイタッチすれば、もう友達。<br>私たちは、ダーツを通して「繋がり」を提供しています。</p>
+            </div>
+            <div class="card">
+                <h3>✨ 接客の極意セブン</h3>
+                <div class="rule-item"><div class="rule-num">1</div><div class="rule-content"><strong>最初の1投は「笑顔」から</strong><p>ダーツが上手いスタッフより、笑顔で「ナイス！」と言ってくれるスタッフの方が、100倍愛されます。</p></div></div>
+                <div class="rule-item"><div class="rule-num">2</div><div class="rule-content"><strong>お客様より「大きな声」で喜ぶ</strong><p>お客様がブルに入れたら、本人以上に喜んでください。その共感が、最高のサービスです。</p></div></div>
+                <div class="rule-item"><div class="rule-num">3</div><div class="rule-content"><strong>グラスの空きは「おかわり」</strong><p>ダーツに夢中なお客様は、喉の渇きを忘れます。「冷たいのありますよ」の一言が、売上と体調を守ります。</p></div></div>
+                <div class="rule-item"><div class="rule-num">4</div><div class="rule-content"><strong>安全のゴールキーパー</strong><p>酔っ払って矢が飛び交うのは危険です。「おっと、少し休憩しましょうか」と、優しく制止できるのはあなただけです。</p></div></div>
+            </div>
+        </div>
+
+        <!-- ヒントタブ -->
+        <div id="tab-hints" class="tab-content">
+            <h2 class="tab-title">経営ヒント30選</h2>
+            <div class="hint-nav">
+                <a href="#hint-sales" class="hint-nav-item nav-cat-a"><span class="hint-nav-title">売上</span><span class="hint-nav-desc">Sales</span></a>
+                <a href="#hint-attract" class="hint-nav-item nav-cat-b"><span class="hint-nav-title">集客</span><span class="hint-nav-desc">Guest</span></a>
+                <a href="#hint-fan" class="hint-nav-item nav-cat-c"><span class="hint-nav-title">ファン</span><span class="hint-nav-desc">Fan</span></a>
+                <a href="#hint-efficiency" class="hint-nav-item nav-cat-d"><span class="hint-nav-title">効率</span><span class="hint-nav-desc">Work</span></a>
+                <a href="#hint-team" class="hint-nav-item nav-cat-e"><span class="hint-nav-title">人材</span><span class="hint-nav-desc">Team</span></a>
+                <a href="#hint-space" class="hint-nav-item nav-cat-f"><span class="hint-nav-title">環境</span><span class="hint-nav-desc">Space</span></a>
+            </div>
+
+            <div class="card" id="hint-sales">
+                <h3><span class="category-tag cat-a">売上</span> 客単価・売上</h3>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">1. 「負けテキーラ」の文化</div><div class="accordion-body">敗者がドリンク代を払うルールを提案。ドリンク売上が倍増します。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">2. セット料金の設定</div><div class="accordion-body">「チャージ＋1D＋投げ放題＝2,000円」など、明朗会計プランで新規客を獲得。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">3. マイダーツお預かり</div><div class="accordion-body">常連様のダーツを預かり、他店への浮気を防ぎリピートを高めます。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">4. 「スタッフへの1杯」</div><div class="accordion-body">スタッフに奢れる専用メニュー（500円など）を作り、チップ代わりに。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">5. イベント時限定フード</div><div class="accordion-body">大会時限定の「片手で食べられる高単価フード」で特別感を演出。</div></div>
+            </div>
+
+            <div class="card" id="hint-attract">
+                <h3><span class="category-tag cat-b">集客</span> 認知拡大</h3>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">6. Googleマップ写真更新</div><div class="accordion-body">盛り上がっている「人」の写真を週1回アップするだけで検索順位UP。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">7. 「入り口」の演出</div><div class="accordion-body">外からマシンが見えるように配置するか、のぼりで「遊べる店」と伝えます。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">8. 近隣店とのコラボ</div><div class="accordion-body">近くの店にチラシを置き、レシート持参で「1ゲーム無料」に（相互送客）。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">9. LINE公式の活用</div><div class="accordion-body">雨の日や暇な時間に「今から1時間投げ放題」などを配信し即効集客。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">10. SNSでお客様紹介</div><div class="accordion-body">（許可を得て）ハイスコアのお客様を称え、来店動機と承認欲求を満たします。</div></div>
+            </div>
+
+            <div class="card" id="hint-fan">
+                <h3><span class="category-tag cat-c">ファン</span> コミュニティ</h3>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">11. 部活動の発足</div><div class="accordion-body">「初心者ダーツ部」「激辛部」など、ゆるいコミュニティで来店理由を作ります。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">12. ランキングボード</div><div class="accordion-body">ホワイトボードで「今月のハイスコア」を掲示し、競争心を煽ります。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">13. マッチング仲介</div><div class="accordion-body">一人客同士をスタッフが仲介し対戦を組む。最強の定着策です。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">14. 周年イベント最大化</div><div class="accordion-body">「ダーツ導入1周年」もイベント化して祝います。イベントは多いほうが良いです。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">15. 名物スタッフ育成</div><div class="accordion-body">「あのスタッフと投げたい」と思わせるため、業務として練習時間を与えます。</div></div>
+            </div>
+
+            <div class="card" id="hint-efficiency">
+                <h3><span class="category-tag cat-d">効率</span> 効率化・コスト</h3>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">16. アイドリング活用</div><div class="accordion-body">客足が遅い時間を「投げ放題」にして席を埋め、賑わいを演出します。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">17. デッドスペース活用</div><div class="accordion-body">使われていない席や通路奥にマシンを置き、坪効率を最大化します。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">18. メンテナンス習慣化</div><div class="accordion-body">工具を常備し、チップ詰まり等による稼働停止時間をゼロにします。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">19. 照明の演出で節約</div><div class="accordion-body">ダーツエリアだけ照明を落とし、電気代削減と雰囲気作りを両立。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">20. オペレーション簡略化</div><div class="accordion-body">ゲーム代を「伝票付け」か「コイン制」にしてスタッフの手間を減らします。</div></div>
+            </div>
+
+            <div class="card" id="hint-team">
+                <h3><span class="category-tag cat-e">人材</span> チーム作り</h3>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">21. 「褒め出し」の文化</div><div class="accordion-body">ミス指摘より、良い接客を朝礼で発表。「褒められる」快感が人を育てます。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">22. ゲーム手当</div><div class="accordion-body">「勤務中にあえて投げる」ことを仕事と認め、お客様と遊ぶことを推奨します。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">23. スタッフ・シグネチャー</div><div class="accordion-body">「〇〇ちゃん考案カクテル」など個人の名前が入ったメニューで責任感UP。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">24. 常連客への紹介</div><div class="accordion-body">新人は常連客へ「育ててやってください」と紹介し、可愛がられる土壌を作ります。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">25. 退勤後の1ゲーム</div><div class="accordion-body">仕事終わりに1ゲーム投げて「お疲れ様！」と解散。チームの絆が強まります。</div></div>
+            </div>
+
+            <div class="card" id="hint-space">
+                <h3><span class="category-tag cat-f">環境</span> 空間演出</h3>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">26. BGMの「音量」管理</div><div class="accordion-body">盛り上がっている時は上げ、引いている時は下げる。DJのように空気を操ります。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">27. 「音」の演出</div><div class="accordion-body">ブルに入った効果音の響きが重要。次のプレイヤーを誘う音量バランスに。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">28. トイレの神様</div><div class="accordion-body">トイレの清潔さとアメニティ充実は、女性客のリピート率に直結します。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">29. 動線の確保</div><div class="accordion-body">投げている人の邪魔にならずに移動できるか？テーブル配置でストレスが変わります。</div></div>
+                <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">30. 照明のマジック</div><div class="accordion-body">ダーツボードにスポットライトを当て、客席は暗く。「主役」になれるステージを作ります。</div></div>
+            </div>
+        </div>
+
+        <!-- 口コミタブ -->
+        <div id="tab-qr" class="tab-content">
+            <h2 class="tab-title">Google口コミQR</h2>
+            <div class="card">
+                <h3>⭐ お客様に見せるだけ！</h3>
+                <p style="margin-bottom:15px;">「ここから写真付きで口コミしてくれたら、1ドリンク無料です！」と案内しましょう。<br>※設定画面でURLを登録してください。</p>
+                <div class="qr-container">
+                    <span class="qr-note">▼ 口コミ投稿はこちら ▼</span>
+                    <div id="qr-output"><p style="color:#aaa; padding:20px;">(URL未設定)</p></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ボトムナビ: 5つに絞って押しやすく -->
+    <nav class="bottom-nav">
+        <div id="nav-sns" class="nav-item active" onclick="switchTab('sns')">
+            <span class="nav-icon">📷</span><span>SNS</span>
+        </div>
+        <div id="nav-talk" class="nav-item" onclick="switchTab('talk')">
+            <span class="nav-icon">🗣</span><span>接客</span>
+        </div>
+        <div id="nav-team" class="nav-item" onclick="switchTab('team')">
+            <span class="nav-icon">🤝</span><span>チーム</span>
+        </div>
+        <div id="nav-hints" class="nav-item" onclick="switchTab('hints')">
+            <span class="nav-icon">💡</span><span>ヒント</span>
+        </div>
+        <div id="nav-qr" class="nav-item" onclick="switchTab('qr')">
+            <span class="nav-icon">⭐</span><span>口コミ</span>
+        </div>
+    </nav>
+
+    <!-- Infoモーダル（旧Infoタブの内容） -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">ℹ️ お役立ちリンク</h3>
+            <p style="margin-bottom:15px; color:#ccc; font-size:0.9rem;">
+                業務でよく使うサイトへのリンク集です。<br>設定(⚙️)からURLを変更できます。
+            </p>
+            <div id="info-links-container"></div>
+            <button class="close-modal" onclick="closeInfoModal()">閉じる</button>
+        </div>
+    </div>
+
+    <!-- ガイドモーダル -->
+    <div id="guide-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">🔰 活用ガイド</h3>
+            <div class="guide-section" style="margin-bottom:20px;">
+                <p style="color:#fff; line-height:1.6;">
+                    このアプリは、あなたのお店を<strong>「地域一番の繁盛店」</strong>にするための最強のパートナーです。
+                </p>
+            </div>
+            <div style="background:#222; padding:15px; border-radius:8px;">
+                <div style="margin-bottom:10px;"><strong>📷 SNS</strong> : 投稿文作成</div>
+                <div style="margin-bottom:10px;"><strong>🗣 接客</strong> : 接客ノウハウ・クエスト</div>
+                <div style="margin-bottom:10px;"><strong>🤝 チーム</strong> : 心得・ルール共有</div>
+                <div style="margin-bottom:10px;"><strong>💡 ヒント</strong> : 集客アイデア集</div>
+                <div><strong>⭐ 口コミ</strong> : QRコード表示</div>
+            </div>
+            <button class="close-modal" onclick="closeGuide()">閉じる</button>
+        </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">⚙️ 設定・カスタマイズ</h3>
+            <div class="setting-section">
+                <span class="setting-label">店舗ロゴ画像</span>
+                <input type="file" id="logo-input" accept="image/*" class="input-field" style="padding:8px;">
+                <button onclick="clearLogo()" style="background:#444; color:#fff; border:none; padding:8px 15px; border-radius:4px; font-size:0.85rem; margin-top:5px;">ロゴをリセット</button>
+            </div>
+            <div class="setting-section">
+                <span class="setting-label">SNS用 店名</span>
+                <input type="text" id="shop-name-input" class="input-field" placeholder="店舗名を入力">
+                <span class="setting-label">SNS用 店舗URL</span>
+                <!-- 改善: type=urlでキーボード最適化 -->
+                <input type="url" id="shop-url-input" class="input-field" placeholder="https://...">
+            </div>
+            <div class="setting-section">
+                <span class="setting-label">ハッシュタグ用 地域・最寄り駅</span>
+                <input type="text" id="shop-area-input" class="input-field" placeholder="例: 六本木 (自動生成に使われます)">
+            </div>
+            <div class="setting-section">
+                <span class="setting-label">利用するSNS設定 (表示切替)</span>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <span class="checkbox-label">Instagram</span>
+                        <input type="checkbox" name="enabled_sns" value="instagram" checked>
+                    </label>
+                    <label class="checkbox-item">
+                        <span class="checkbox-label">Facebook</span>
+                        <input type="checkbox" name="enabled_sns" value="facebook" checked>
+                    </label>
+                    <label class="checkbox-item">
+                        <span class="checkbox-label">X (旧Twitter)</span>
+                        <input type="checkbox" name="enabled_sns" value="x" checked>
+                    </label>
+                    <label class="checkbox-item">
+                        <span class="checkbox-label">LINE</span>
+                        <input type="checkbox" name="enabled_sns" value="line" checked>
+                    </label>
+                </div>
+                <p style="font-size:0.75rem; color:#aaa; margin-top:5px;">※チェックを外すとメイン画面に表示されなくなります。</p>
+            </div>
+            <div class="setting-section">
+                <span class="setting-label">Googleマップ 口コミ用URL</span>
+                <input type="url" id="review-url-input" class="input-field" placeholder="口コミ投稿ページのURL">
+            </div>
+            <div class="setting-section" style="border:none;">
+                <span class="setting-label">ℹ️ リンク集の設定</span>
+                <div style="margin-bottom:15px; background:#222; padding:10px; border-radius:8px;">
+                    <span style="display:block;color:#ccc;margin-bottom:5px;font-size:0.8rem;">リンク①</span>
+                    <input type="text" id="link1-title" class="input-field" placeholder="タイトル (例: 地図)" style="margin-bottom:5px;">
+                    <input type="url" id="link1-url" class="input-field" placeholder="URL">
+                </div>
+                <div style="margin-bottom:15px; background:#222; padding:10px; border-radius:8px;">
+                    <span style="display:block;color:#ccc;margin-bottom:5px;font-size:0.8rem;">リンク②</span>
+                    <input type="text" id="link2-title" class="input-field" placeholder="タイトル">
+                    <input type="url" id="link2-url" class="input-field" placeholder="URL">
+                </div>
+                <div style="background:#222; padding:10px; border-radius:8px;">
+                    <span style="display:block;color:#ccc;margin-bottom:5px;font-size:0.8rem;">リンク③</span>
+                    <input type="text" id="link3-title" class="input-field" placeholder="タイトル">
+                    <input type="url" id="link3-url" class="input-field" placeholder="URL">
+                </div>
+            </div>
+            <button class="save-btn" onclick="saveSettings()">設定を保存する</button>
+            <button class="close-modal" onclick="closeSettings()">キャンセル</button>
+            
+            <div class="demo-area">
+                <span class="demo-link" onclick="fillDemoData()">六本木デモ反映</span>
+                <span class="demo-link" onclick="clearDemoData()">リセット</span>
+            </div>
+        </div>
+    </div>
+    <div id="toast">設定を保存しました</div>
+
+    <script>
+        // データ管理
+        let shopName = localStorage.getItem('mjs_shop_name') || '[店名]';
+        let shopArea = localStorage.getItem('mjs_shop_area') || '';
+        let shopUrl = localStorage.getItem('mjs_shop_url') || '';
+        let reviewUrl = localStorage.getItem('mjs_review_url') || '';
+        
+        // 有効なSNSリスト (デフォルトは全部)
+        let enabledSnsList = JSON.parse(localStorage.getItem('mjs_enabled_sns')) || ['instagram', 'facebook', 'x', 'line'];
+        
+        let infoLinks = JSON.parse(localStorage.getItem('mjs_info_links')) || [{title:"",url:""}, {title:"",url:""}, {title:"",url:""}];
+        let customLogo = localStorage.getItem('mjs_custom_logo');
+
+        let currentSns = 'instagram'; // 現在選択中のSNS
+
+        // ★バグ修正: typePostsデータを定義
+        const typePosts = {
+            empathy: [
+                "今日もお疲れ様です！スタッフの〇〇です🍺\n最近急に寒くなりましたが、体調崩してませんか？\n私は昨日、ダーツの調子が悪くてちょっと凹んでます（笑）\n慰めの一杯、お待ちしてます…！",
+                "【感謝】昨夜は満席ありがとうございました！✨\n初めてのお客様同士が、ダーツを通じて仲良くなっているのを見て、\n「これぞダーツバー！」と嬉しくなりました😭\n今日も素敵な出会いがありますように！"
+            ],
+            problem: [
+                "「ダーツバーって入りにくい…」と思ってませんか？🤔\n実は当店のお客様の3割は「お一人様」なんです！\nスタッフが全力で話しかけるので（笑）、寂しい思いはさせません！🔰\nまずは一杯、勇気を出して来てみませんか？",
+                "仕事で嫌なことがあった日は…投げまくるに限ります！💥\nダーツがボードに刺さる「ドン！」という音、最高のストレス発散になりますよ。\n愚痴聞き係のスタッフもお待ちしてます🍺"
+            ],
+            offer: [
+                "【本日限定】この投稿を見た方だけ！🤫\n「インスタ見た」とスタッフに伝えていただければ、\nなんと【チャージ料無料】にしちゃいます！\n21時までの入店限定！急げー！💨",
+                "雨宿りキャンペーン実施中☔\n「雨凄いですね」の一言で、お会計から10%OFF！\n雨の日はまったり練習日和🎯\n足元にお気をつけてお越しください！"
+            ]
+        };
+
+        const basicPosts = {
+            new: "【速報】ついに当店に…アレが来ました！🎯\nこんばんは、店長です！以前からリクエストの多かった「ダーツマシン」を導入しました✨\nお酒を飲みながらワイワイ遊べる新しいスポットに進化！\n🔰「やったことない」方も大歓迎！スタッフが優しく教えます（笑）\n今夜はみんなで盛り上がりましょう！",
+            rain: "雨ですね…☔\nでも、当店なら「雨宿りダーツ」楽しめます！\n外に出るのが億劫な日は、暖かい店内でまったり練習しませんか？\n「SNS見たよ」で、チャージ料サービスしちゃいます🤫\n足元にお気をつけてお越しください！",
+            weekend: "金曜日！華金です！🔥\n今週もお疲れ様でした！今夜はスタッフ全員、ダーツ対戦受けて立ちます（笑）\n仕事のストレス、投げて発散しませんか？\n負けた方が1杯おごる「テキーラマッチ」も…！？🥃\n挑戦者、求む！！",
+            empty: "【ゆる募】ダーツの練習相手🎯\n今なら台が空いています！コソ練（コッソリ練習）するなら今がチャンスです👀\nスタッフも手が空いていれば、喜んで対戦相手になります！\nお一人様でもお気軽にどうぞ〜！",
+            event: "🏆【緊急告知】ハウストーナメント開催！🏆\n来月〇日、当店主催のダーツ大会やります！\n・ハイレベルお断り！？初心者歓迎🔰\n・ペアはくじ引きで決定！\n・優勝ペアには豪華景品🎁\n常連さんも初めましての方も、ダーツを通じて仲良くなっている姿が見たいです！エントリーはDMで！"
+        };
+        const monthlyPostsData = {
+            "1": [ {title:"🎍 新年のご挨拶", text:"新年あけましておめでとうございます！🎍\n今年の「投げ初め」はもうお済みですか？\nINSERT_SHOP_NAME は本日から元気に営業スタート！\n\nお正月太り解消に、ダーツで体を動かしませんか？🎯"}, {title:"🍻 新年会シーズン", text:"新年会、2次会のお店はお決まりですか？🍻\n当店なら【飲み放題＋ダーツ投げ放題】プランをご用意！\n盛り上がること間違いなしです🎯\n貸切のご相談もお気軽にDMください！"}],
+            "2": [ {title:"👹 節分", text:"今日は節分！👹\n当店では「鬼（スタッフ）」をダーツで退治してくれる勇者を募集中（笑）🎯\n勝ったら「1ドリンク」プレゼント！\n厄払いダーツお待ちしてます！"}, {title:"🍫 バレンタイン", text:"もうすぐバレンタイン🍫\nチョコもいいけど、ダーツもね！🎯\nカップルはもちろん、「チョコ貰えなかった同盟」の男子会も大歓迎（笑）\n甘いカクテルで乾杯しましょう🍸"}],
+            "3": [ {title:"🎎 ひな祭り", text:"今日はひな祭り🎎\n本日は「ダーツ女子」応援デー！\n女性グループは【チャージ無料】にしちゃいます✨\n女子会×ダーツ、意外と盛り上がるんですよ！"}, {title:"🎓 卒業・送別会", text:"卒業シーズン🌸\nお世話になった仲間との送別会、最後はダーツで笑顔で送り出しませんか？🎯\n大人数での貸切も承ります！"}],
+            "4": [ {title:"🤥 エイプリルフール", text:"今日はエイプリルフール！\n「真ん中に入れたら100万円！」…は嘘ですが（笑）、\n1ドリンクサービスなら本当です！！🎯\n嘘みたいな奇跡のショット見せに来てください！"}, {title:"🔰 新生活応援", text:"新社会人・新入生の皆様おめでとうございます！🌸\n新しい環境で疲れたら、無心でダーツを投げてリフレッシュ！\nここは「大人の放課後」です☕"}],
+            "5": [ {title:"🎏 GW中", text:"GW楽しんでますかー！？🎏\n遊び疲れたら涼しい店内で一休み。\n連休中も休まず営業中！地元の友達との集まりにもピッタリです🎯"}, {title:"😔 五月病対策", text:"GW明け、やる気が出ない…それ「五月病」かも😱\nそんな時は体を動かして脳をリフレッシュ！\nダーツの集中力はメンタルケアにも良いらしいですよ？"}],
+            "6": [ {title:"☔ 梅雨本番", text:"毎日ジメジメしますね…🐌\nでも！店内は快適＆爽快です！✨\nスカッと爽やかな「レモンサワー」始めました🍋\n雨宿りついでに一杯どうですか？"}, {title:"👨 父の日", text:"今週日曜は父の日👔\nお父さんと親子ダーツなんて素敵です✨\nお父様と一緒にご来店で、おつまみ1品サービスします！"}],
+            "7": [ {title:"🎋 七夕", text:"今日は七夕🌌\n「ダーツが上手くなりますように」「素敵な出会いがありますように」\nその願い、当店なら叶うかも！？（笑）\n運命の出会いがあるかも…🎯"}, {title:"🌊 海の日", text:"海の日！夏本番！☀️\n海もいいけど、涼しい店内で「トロピカルカクテル」片手にダーツも最高ですよ🍹\n日焼けしたくない派の避難所です（笑）"}],
+            "8": [ {title:"🍺 猛暑", text:"暑い！暑すぎる！！💦\nこんな日はキンキンに冷えたビールしか勝たん！🍺\n仕事終わりの一杯、ダーツバーでどうですか？\n「とりあえず生、とりあえず1ゲーム」でお待ちしてます🏃‍♂️"}, {title:"⛰ 山の日・お盆", text:"お盆休みスタート！帰省中の方おかえりなさい🏠\n地元の友達と集まるなら、昔話に花を咲かせながらダーツはいかが？\n盛り上がること間違いなしです🎯"}],
+            "9": [ {title:"🌾 スポーツの秋", text:"9月スタート！🍂\n食欲の秋もいいけど、やっぱり「スポーツの秋」！🎯\nダーツは頭も体も使う立派なスポーツ。\n美味しいお酒と共に楽しみましょう！"}, {title:"🌕 十五夜", text:"今夜は十五夜🌕\nダーツの「ブル（真ん中）」をお月様に見立てて射抜いてやりましょう！🎯\nハットトリックを決めた方には1杯サービス！🎑"}],
+            "10": [ {title:"🎃 ハロウィン準備", text:"もうすぐハロウィン！🎃\n当店のハロウィンパーティー、今年は〇〇やります！\nコスプレでダーツ投げにくくないの？…気合いでカバーです！笑"}, {title:"👻 ハロウィン当日", text:"Happy Halloween!!👻\n今夜は仮装して集合！コスプレ来店で【1ドリンク無料】🍹\nカボチャのお化けより怖い（？）スタッフとの対決も開催中！\nお菓子も配ってますよ～🍭"}],
+            "11": [ {title:"🍷 ボジョレー", text:"ボジョレー・ヌーヴォー解禁です🍷✨\nワイン片手に優雅にダーツ…なんて大人な夜はいかがでしょう。\n数量限定なのでお早めに！"}, {title:"💏 いい夫婦の日", text:"11月22日は「いい夫婦の日」💑\nご夫婦、カップルでダーツなんて素敵です。\nペアでのご来店で、おつまみサービスします！💕"}],
+            "12": [ {title:"🏅 流行語大賞", text:"もう12月！師走です🏃‍♂️\n当店の流行語大賞は…「もう1ゲーム！」に決定です（笑）\n今年一番言ったこの言葉、今日も言いに来てください！🎯"}, {title:"🎄 クリスマス", text:"メリークリスマス！🎄🎅\n「予定ないよ！」という方、安心してください。スタッフもです（笑）\n今夜は「クリぼっち」集合！みんなで投げれば寂しくない！🎯"}]
+        };
+
+        const quests = [
+            "【今日はお客様の名前を1人覚えるべし！】",
+            "【ハットトリックが出たら、誰よりも大きな声で叫ぶべし！】",
+            "【お客様とハイタッチを3回するべし！】",
+            "【ドリンクが空いているお客様に、最高の笑顔で『おかわりいかがですか？』と聞くべし！】",
+            "【一人で投げているお客様に『ナイス！』と声をかけるべし！】",
+            "【スタッフ同士で『ありがとう』を3回言い合うべし！】",
+            "【トイレチェックを1時間に1回行うべし！】"
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setFormValues();
+            const currentMonth = new Date().getMonth() + 1;
+            document.getElementById('month-select').value = currentMonth;
+            updateMonthPosts(); 
+            renderInfoLinks();
+            updateQR();
+            if(customLogo) {
+                document.getElementById('header-logo-img').src = customLogo;
+            }
+            
+            // 起動時のSNS表示制御
+            applyEnabledSns();
+        });
+
+        function setFormValues() {
+            if(shopName !== '[店名]') document.getElementById('shop-name-input').value = shopName;
+            document.getElementById('shop-area-input').value = shopArea;
+            document.getElementById('shop-url-input').value = shopUrl;
+            document.getElementById('review-url-input').value = reviewUrl;
+            
+            // チェックボックスの状態を復元
+            document.querySelectorAll('input[name="enabled_sns"]').forEach(checkbox => {
+                checkbox.checked = enabledSnsList.includes(checkbox.value);
+            });
+            
+            document.getElementById('link1-title').value = infoLinks[0].title;
+            document.getElementById('link1-url').value = infoLinks[0].url;
+            document.getElementById('link2-title').value = infoLinks[1].title;
+            document.getElementById('link2-url').value = infoLinks[1].url;
+            document.getElementById('link3-title').value = infoLinks[2].title;
+            document.getElementById('link3-url').value = infoLinks[2].url;
+        }
+
+        // 有効なSNSをメイン画面に反映し、選択状態を更新する
+        function applyEnabledSns() {
+            // ボタンの表示/非表示
+            document.querySelectorAll('.sns-btn').forEach(btn => {
+                const snsType = btn.getAttribute('data-sns');
+                if (enabledSnsList.includes(snsType)) {
+                    btn.classList.remove('hidden');
+                } else {
+                    btn.classList.add('hidden');
+                }
+            });
+
+            // もし現在の選択(currentSns)が無効になっていたら、有効なものの先頭に切り替える
+            if (!enabledSnsList.includes(currentSns)) {
+                if (enabledSnsList.length > 0) {
+                    currentSns = enabledSnsList[0];
+                } else {
+                    // 全部オフの場合の安全策（とりあえずInstaを表示扱いにするなど）
+                    currentSns = 'instagram'; 
+                }
+            }
+            updateSnsUi(currentSns);
+        }
+
+        function selectSns(sns, btn) {
+            updateSnsUi(sns);
+            // 何か選択済みなら再生成
+            if(document.getElementById('sns-select-basic').value) generateSns('basic');
+            else if(document.getElementById('sns-select-month').value) generateSns('month');
+            else if(document.getElementById('sns-select-purpose').value) generateSns('purpose');
+        }
+
+        function updateSnsUi(sns) {
+            currentSns = sns;
+            document.querySelectorAll('.sns-btn').forEach(el => el.classList.remove('active'));
+            const target = document.querySelector(`.sns-btn[data-sns="${sns}"]`);
+            // 非表示になっているボタンでも選択状態にするため、存在チェックのみ
+            if(target) target.classList.add('active');
+        }
+
+        function updateMonthPosts() {
+            const month = document.getElementById('month-select').value;
+            const snsSelect = document.getElementById('sns-select-month');
+            const posts = monthlyPostsData[month] || [];
+            snsSelect.innerHTML = '<option value="">▼ 投稿を選択</option>';
+            posts.forEach((post, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = post.title;
+                snsSelect.appendChild(option);
+            });
+        }
+
+        function generateSns(type) {
+            const resultArea = document.getElementById('sns-result');
+            let text = "";
+            
+            // アニメーションリセット
+            resultArea.style.opacity = 0.5;
+            setTimeout(() => { resultArea.style.opacity = 1; }, 200);
+
+            if (type === 'purpose') {
+                const key = document.getElementById('sns-select-purpose').value;
+                if (key && typePosts[key]) {
+                    const randomIndex = Math.floor(Math.random() * typePosts[key].length);
+                    text = typePosts[key][randomIndex];
+                }
+            } else if (type === 'basic') {
+                const key = document.getElementById('sns-select-basic').value;
+                if (key && basicPosts[key]) text = basicPosts[key];
+            } else if (type === 'month') {
+                const month = document.getElementById('month-select').value;
+                const index = document.getElementById('sns-select-month').value;
+                if (month && index !== "" && monthlyPostsData[month][index]) text = monthlyPostsData[month][index].text;
+            }
+
+            if (!text) {
+                resultArea.textContent = "（ここに生成された文章が表示されます）";
+                return;
+            }
+
+            // 店名置換
+            text = text.replace(/INSERT_SHOP_NAME/g, shopName);
+
+            // ---------------------------------------------------
+            // SNS別加工ロジック
+            // ---------------------------------------------------
+            const safeShopName = shopName.replace(/[ 　]/g, ""); // ハッシュタグ用にスペース削除
+            const areaTag = shopArea ? `#${shopArea}` : "#[地域名]";
+            const baseTags = [`#${safeShopName}`, "#ダーツバー", areaTag, "#飲み会", "#バー", "#二次会", "#カクテル"];
+            
+            // 7つになるように調整（足りない分やランダム要素）
+            const extraTags = ["#歓送迎会", "#貸切", "#ダーツ女子", "#ダーツ男子", "#スタッフ募集中", "#駅チカ", "#深夜営業"];
+            // タグを7個に揃える
+            let finalTags = [...baseTags];
+            while(finalTags.length < 7) {
+                finalTags.push(extraTags[finalTags.length % extraTags.length]);
+            }
+            finalTags = finalTags.slice(0, 7); // 7個に制限
+
+            if (currentSns === 'instagram') {
+                // 【Instagram】改行多め + ハッシュタグ7個
+                text += "\n\n.\n.\n";
+                if (shopUrl) text += `▼ご予約・詳細はこちら\n${shopUrl}\n\n`;
+                text += finalTags.join(" "); // 横書きで並べる
+                
+            } else if (currentSns === 'x') {
+                // 【X】140字意識、タグ少なめ、URL重要
+                // 本文が長すぎる場合はカットする処理（簡易的）
+                if(text.length > 100) text = text.substring(0, 97) + "...";
+                if (shopUrl) text += `\n\n詳細: ${shopUrl}`;
+                // Xはタグ2-3個が推奨
+                text += `\n\n${baseTags[0]} ${baseTags[1]} ${baseTags[2]}`;
+
+            } else if (currentSns === 'facebook') {
+                // 【Facebook】標準的 + リンクプレビュー
+                if (shopUrl) text += `\n\n🌐 詳細はこちら:\n${shopUrl}`;
+                // FBもハッシュタグ有効、少し控えめに
+                text += `\n\n${baseTags.slice(0, 5).join(" ")}`;
+
+            } else if (currentSns === 'line') {
+                // 【LINE】吹き出し意識、重要事項を上に
+                // LINE VOOM用ならハッシュタグありだが、メッセージ配信ならタグは飾り
+                let header = "📢 " + shopName + "からのお知らせ\n\n";
+                text = header + text;
+                if (shopUrl) text += `\n\n👇 詳しくはこちら\n${shopUrl}`;
+                // 要望に合わせてLINEでもタグを入れる（7つ）
+                text += `\n\n${finalTags.join(" ")}`;
+            }
+
+            resultArea.textContent = text;
+        }
+
+        function renderInfoLinks() {
+            const container = document.getElementById('info-links-container');
+            container.innerHTML = '';
+            let hasLink = false;
+            infoLinks.forEach(link => {
+                if(link.title && link.url) {
+                    hasLink = true;
+                    const a = document.createElement('a');
+                    a.href = link.url; a.target = "_blank"; a.className = "info-link-btn";
+                    a.innerHTML = `<span class="info-title">${link.title}</span><span class="info-icon">➤</span>`;
+                    container.appendChild(a);
+                }
+            });
+            if(!hasLink) container.innerHTML = '<div class="empty-link-msg" style="color:#666;text-align:center;">リンクはまだ設定されていません。<br>設定画面から登録してください。</div>';
+        }
+
+        function updateQR() {
+            const container = document.getElementById('qr-output');
+            if(reviewUrl) {
+                const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(reviewUrl)}`;
+                container.innerHTML = `<img src="${apiUrl}" alt="口コミQR">`;
+            } else {
+                container.innerHTML = '<p style="color:#aaa; padding:20px;">(URL未設定)<br>設定画面から口コミ用URLを登録してください</p>';
+            }
+        }
+
+        const logoInput = document.getElementById('logo-input');
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    customLogo = e.target.result;
+                    document.getElementById('header-logo-img').src = customLogo;
+                    localStorage.setItem('mjs_custom_logo', customLogo);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function clearLogo() {
+            localStorage.removeItem('mjs_custom_logo');
+            customLogo = null;
+            document.getElementById('header-logo-img').src = "//placehold.co/200x120/white/black?text=LOGO";
+            logoInput.value = "";
+            showToast("ロゴをリセットしました");
+        }
+
+        function saveSettings() {
+            const nameVal = document.getElementById('shop-name-input').value.trim();
+            shopName = nameVal ? nameVal : '[店名]';
+            if(nameVal) localStorage.setItem('mjs_shop_name', nameVal); else localStorage.removeItem('mjs_shop_name');
+
+            const areaVal = document.getElementById('shop-area-input').value.trim();
+            shopArea = areaVal;
+            if(areaVal) localStorage.setItem('mjs_shop_area', areaVal); else localStorage.removeItem('mjs_shop_area');
+
+            const urlVal = document.getElementById('shop-url-input').value.trim();
+            shopUrl = urlVal;
+            if(urlVal) localStorage.setItem('mjs_shop_url', urlVal); else localStorage.removeItem('mjs_shop_url');
+
+            const revVal = document.getElementById('review-url-input').value.trim();
+            reviewUrl = revVal;
+            if(revVal) localStorage.setItem('mjs_review_url', revVal); else localStorage.removeItem('mjs_review_url');
+
+            // SNSの有効無効設定を保存
+            enabledSnsList = [];
+            document.querySelectorAll('input[name="enabled_sns"]:checked').forEach(checkbox => {
+                enabledSnsList.push(checkbox.value);
+            });
+            // 全部オフならInstagramだけは入れる(エラー回避)
+            if(enabledSnsList.length === 0) enabledSnsList.push('instagram');
+            
+            localStorage.setItem('mjs_enabled_sns', JSON.stringify(enabledSnsList));
+
+            infoLinks = [
+                { title: document.getElementById('link1-title').value.trim(), url: document.getElementById('link1-url').value.trim() },
+                { title: document.getElementById('link2-title').value.trim(), url: document.getElementById('link2-url').value.trim() },
+                { title: document.getElementById('link3-title').value.trim(), url: document.getElementById('link3-url').value.trim() }
+            ];
+            localStorage.setItem('mjs_info_links', JSON.stringify(infoLinks));
+
+            renderInfoLinks();
+            updateQR();
+            
+            // SNSの表示状態と選択状態を更新
+            applyEnabledSns();
+            
+            // 再生成して反映
+            if(document.getElementById('sns-select-basic').value) generateSns('basic');
+            else if(document.getElementById('sns-select-month').value) generateSns('month');
+            else if(document.getElementById('sns-select-purpose').value) generateSns('purpose');
+            
+            closeSettings();
+            showToast("設定を保存しました");
+        }
+
+        function fillDemoData() {
+            document.getElementById('shop-name-input').value = "ダーツバーMJS 六本木店 (デモ)";
+            document.getElementById('shop-area-input').value = "六本木";
+            document.getElementById('shop-url-input').value = "https://mjs-co.net/darts";
+            document.getElementById('review-url-input').value = "https://mjs-co.net"; 
+            
+            document.getElementById('link1-title').value = "六本木 地図";
+            document.getElementById('link1-url').value = "https://www.google.com/maps/search/?api=1&query=六本木交差点";
+            
+            document.getElementById('link2-title').value = "周辺駐車場";
+            document.getElementById('link2-url').value = "https://www.google.com/maps/search/六本木+駐車場";
+            
+            document.getElementById('link3-title').value = "MJS公式サイト";
+            document.getElementById('link3-url').value = "https://mjs-co.net";
+            
+            showToast("六本木デモデータを入力しました（保存してください）");
+        }
+        
+        function clearDemoData() {
+            document.getElementById('shop-name-input').value = "";
+            document.getElementById('shop-area-input').value = "";
+            document.getElementById('shop-url-input').value = "";
+            document.getElementById('review-url-input').value = "";
+            document.getElementById('link1-title').value = ""; document.getElementById('link1-url').value = "";
+            document.getElementById('link2-title').value = ""; document.getElementById('link2-url').value = "";
+            document.getElementById('link3-title').value = ""; document.getElementById('link3-url').value = "";
+            showToast("クリアしました（保存してください）");
+        }
+
+        function drawQuest() {
+            const display = document.getElementById('quest-display');
+            display.style.opacity = 0;
+            setTimeout(() => {
+                const randomQuest = quests[Math.floor(Math.random() * quests.length)];
+                display.innerText = randomQuest;
+                display.style.opacity = 1;
+            }, 300);
+        }
+
+        function switchTalkSub(subName, btn) {
+            document.querySelectorAll('.talk-sub-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('talk-sub-' + subName).classList.add('active');
+            document.querySelectorAll('.talk-nav-btn').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function togglePhotoTips() {
+            const content = document.getElementById('photo-tips-content');
+            content.classList.toggle('open');
+        }
+
+        function copyText() {
+            const text = document.getElementById('sns-result').textContent;
+            if (text.includes("（ここに生成")) return;
+            navigator.clipboard.writeText(text).then(() => { showToast("コピーしました！"); });
+        }
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg; toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+        function toggleAccordion(header) {
+            header.classList.toggle('open');
+            const body = header.nextElementSibling;
+            body.style.display = (body.style.display === "block") ? "none" : "block";
+        }
+        function toggleDef(card) {
+            card.classList.toggle('open');
+        }
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + tabName).classList.add('active');
+            // スクロールトップへ
+            const main = document.querySelector('main');
+            main.scrollTop = 0;
+        }
+        function resetApp() {
+            switchTab('sns');
+            document.getElementById('sns-select-basic').value = "";
+            document.getElementById('sns-select-month').value = "";
+            document.getElementById('sns-select-purpose').value = "";
+            document.getElementById('sns-result').textContent = "（ここに生成された文章が表示されます）";
+        }
+
+        // モーダル制御
+        function openSettings() { toggleModal('settings-modal', true); }
+        function closeSettings() { toggleModal('settings-modal', false); }
+        function openGuide() { toggleModal('guide-modal', true); }
+        function closeGuide() { toggleModal('guide-modal', false); }
+        function openInfoModal() { 
+            toggleModal('info-modal', true); 
+            renderInfoLinks(); // 最新のリンク情報を反映
+        }
+        function closeInfoModal() { toggleModal('info-modal', false); }
+
+        function toggleModal(id, show) {
+            const el = document.getElementById(id);
+            if(show) {
+                el.style.display = 'flex';
+                // アニメーション用遅延
+                setTimeout(() => el.classList.add('show'), 10);
+            } else {
+                el.classList.remove('show');
+                setTimeout(() => el.style.display = 'none', 200);
+            }
+        }
+    </script>
+</body>
+</html>
