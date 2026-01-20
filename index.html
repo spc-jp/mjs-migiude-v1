@@ -11,7 +11,7 @@
         :root {
             /* Dark Mode (Default) */
             --bg-body-grad: linear-gradient(to bottom, #11141c, #000000);
-            --bg-glass: rgba(20, 24, 35, 0.85);
+            --bg-glass: rgba(20, 24, 35, 0.7);
             --bg-glass-border: rgba(255, 255, 255, 0.08);
             --bg-input: #050505;
             --bg-input-border: #222;
@@ -36,7 +36,7 @@
         /* Light Mode Override */
         body.light-mode {
             --bg-body-grad: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
-            --bg-glass: rgba(255, 255, 255, 0.95);
+            --bg-glass: rgba(255, 255, 255, 0.85);
             --bg-glass-border: rgba(0, 0, 0, 0.05);
             --bg-input: #ffffff;
             --bg-input-border: #ddd;
@@ -75,9 +75,9 @@
 
         .touch-feedback:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* --- ヘッダー (Updated Design) --- */
+        /* --- ヘッダー --- */
         header {
-            padding: 12px 15px;
+            padding: 12px 20px;
             padding-top: max(12px, env(safe-area-inset-top));
             background: var(--bg-glass);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -89,18 +89,15 @@
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
         
-        /* 左側：ロゴとタイトル */
         .header-brand {
             display: flex;
             align-items: center;
             gap: 12px;
             flex: 1;
             min-width: 0;
-            cursor: pointer; /* クリック可能を示す */
+            cursor: pointer;
         }
-        .header-brand:active {
-            opacity: 0.7;
-        }
+        .header-brand:active { opacity: 0.7; }
 
         .header-logo-img {
             height: 40px;
@@ -141,7 +138,6 @@
             text-overflow: ellipsis;
         }
 
-        /* 右側：店名とボタン */
         .header-controls {
             display: flex;
             align-items: center;
@@ -285,27 +281,62 @@
         }
         .preview-box:focus { border-color: var(--primary-color); }
 
-        /* Photo Tips */
-        .tips-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .tip-card {
-            background: var(--bg-glass); border: 1px solid var(--bg-glass-border);
-            border-radius: var(--radius-M); padding: 18px;
-            cursor: pointer; transition: 0.2s;
+        /* Tips Sub Tabs & Chips */
+        .sub-tabs {
+            display: flex;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--bg-glass-border);
         }
-        .tip-card:active { transform: scale(0.98); opacity: 0.9; }
-        .tip-title { 
-            font-weight: 800; color: var(--text-main); 
-            display: flex; align-items: center; gap: 8px; 
-            font-size: 1.1rem; margin-bottom: 8px; 
+        .sub-tab-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        .tip-title i { color: var(--primary-color); font-size: 1.2rem; }
-        .tip-desc { 
-            font-size: 0.95rem; color: var(--text-sub); line-height: 1.8; 
-            display: none; margin-top: 12px; padding-top: 12px; 
-            border-top: 1px dashed var(--bg-glass-border);
+        .sub-tab-btn.active {
+            background: var(--bg-glass);
+            color: var(--text-main);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .tip-card.open .tip-desc { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+        
+        .photo-suggestions { display: flex; flex-direction: column; gap: 12px; }
+        .photo-chip {
+            background: var(--bg-glass);
+            border: 1px solid var(--bg-glass-border);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--shadow-card);
+        }
+        .photo-chip-header {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 800; color: var(--primary-color);
+            font-size: 1rem; margin-bottom: 8px;
+        }
+        .photo-chip-header i { font-size: 1.2rem; width: 24px; text-align: center; }
+        .photo-chip-desc {
+            font-size: 0.9rem; color: var(--text-sub); line-height: 1.7;
+        }
+        .photo-chip-desc ul { margin: 8px 0 8px 18px; padding: 0; }
+        .photo-chip-point {
+            background: rgba(197, 160, 89, 0.15); /* Gold tint */
+            color: var(--primary-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 10px;
+            display: flex; gap: 8px; align-items: center;
+        }
 
         /* Floating Copy Button */
         .fab-copy {
@@ -367,6 +398,7 @@
         .hint-item {
             background: var(--bg-input); border: 1px solid var(--bg-glass-border);
             border-radius: 12px; overflow: hidden; animation: fadeIn 0.4s;
+            scroll-margin-top: 20px; /* Scroll Offset */
         }
         .hint-head {
             padding: 15px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;
@@ -379,6 +411,27 @@
             border-top: 1px dashed var(--bg-glass-border); margin-top: -5px; padding-top: 15px;
         }
         .hint-item.open .hint-body { display: block; animation: fadeIn 0.3s; }
+
+        /* Quotes Section */
+        .quote-box {
+            text-align: center; padding: 25px 15px; margin-bottom: 15px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border-radius: 12px; border: 1px solid var(--bg-glass-border);
+        }
+        .quote-text {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 1.2rem; font-weight: 800; line-height: 1.6;
+            margin-bottom: 15px; color: var(--text-main);
+        }
+        .quote-author {
+            font-size: 0.8rem; color: var(--text-muted); text-align: right; font-style: italic;
+        }
+        .btn-sm {
+            padding: 8px 16px; border-radius: 20px; font-size: 0.8rem;
+            background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted);
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-sm:active { background: var(--bg-glass); color: var(--text-main); border-color: var(--text-main); }
 
         /* Bottom Nav */
         .bottom-nav {
@@ -590,25 +643,19 @@
                 <textarea id="result-box" class="preview-box" readonly placeholder="ここに投稿文が生成されます..."></textarea>
             </div>
 
-            <!-- Step 4 -->
-            <h2 class="section-head"><span class="step-badge">4</span> スマホ撮影の極意</h2>
-            <div class="tips-grid">
-                <div class="tip-card" onclick="toggleTip(this)">
-                    <div class="tip-title"><i class="fa-solid fa-utensils"></i> 料理</div>
-                    <div class="tip-desc">基本は「逆光」か「半逆光」。窓際の自然光が最強です。真上からの俯瞰（ふかん）か、斜め45度から寄り気味で撮るとシズル感が出ます。</div>
-                </div>
-                <div class="tip-card" onclick="toggleTip(this)">
-                    <div class="tip-title"><i class="fa-solid fa-wine-glass"></i> お酒</div>
-                    <div class="tip-desc">グラスの水滴は「冷たさ」の証。拭かずに撮りましょう。背後からライトを当てると液体の色が透き通って美しく見えます。</div>
-                </div>
-                <div class="tip-card" onclick="toggleTip(this)">
-                    <div class="tip-title"><i class="fa-solid fa-bullseye"></i> ダーツ</div>
-                    <div class="tip-desc">盤面だけのアップより「投げている人の後ろ姿」を入れると臨場感が出ます。手元のダーツにピントを合わせ背景をぼかすのもプロっぽいです。</div>
-                </div>
-                <div class="tip-card" onclick="toggleTip(this)">
-                    <div class="tip-title"><i class="fa-solid fa-store"></i> 外観・内装</div>
-                    <div class="tip-desc">内装は「広角」モードで奥行きを出します。お客さんがいない開店直後か、あえて賑わっている様子を「ぼかし」で入れるのも◎。水平・垂直を意識しましょう。</div>
-                </div>
+            <!-- Step 4 (Replaced with Premium Tips) -->
+            <h2 class="section-head"><span class="step-badge">4</span> プロ級撮影テクニック <span style="font-size:0.7em; border:1px solid var(--primary-color); padding:2px 6px; border-radius:4px; margin-left:8px; color:var(--primary-color);">PREMIUM</span></h2>
+            
+            <div class="sub-tabs">
+                <button class="sub-tab-btn active" onclick="switchTipsTab('photo')"><i class="fa-solid fa-camera"></i> 写真</button>
+                <button class="sub-tab-btn" onclick="switchTipsTab('video')"><i class="fa-solid fa-video"></i> 動画</button>
+            </div>
+
+            <div id="tips-content-photo" class="photo-suggestions">
+                <!-- JS Inserted -->
+            </div>
+            <div id="tips-content-video" class="photo-suggestions" style="display:none;">
+                <!-- JS Inserted -->
             </div>
             <div style="height:30px;"></div>
         </div>
@@ -623,6 +670,18 @@
                     <div class="quest-text" id="quest-text">ボタンを押して<br>今日の目標を決めよう</div>
                 </div>
                 <button class="btn-main touch-feedback" onclick="startQuest()">やる仕事を決めてスタート</button>
+            </div>
+
+            <!-- Quote Section (New) -->
+            <div class="info-card">
+                <div class="card-head"><i class="fa-solid fa-gem"></i> プロの金言</div>
+                <div class="quote-box">
+                    <div class="quote-text" id="quote-text">お客様は神様ではない。<br>大切な友人として接せよ。</div>
+                    <div class="quote-author" id="quote-author">- 接客の心得</div>
+                </div>
+                <div style="text-align:right;">
+                    <button class="btn-sm" onclick="drawQuote()"><i class="fa-solid fa-arrows-rotate"></i> 別の言葉を見る</button>
+                </div>
             </div>
 
             <div class="info-card">
@@ -798,7 +857,6 @@
         let currentBgMode = localStorage.getItem('mjs_bg_mode') || 'dark';
 
         // 30 Management Hints (With Category)
-        // sales, attract, fan, efficiency, staff, env
         const managementHints = [
             { c: "sales", icon: "💰", t: "雨の日の特典を用意する", d: "「雨宿りサービス」としてチャージ無料や1杯サービスをSNSで告知。雨の日をチャンスに変える。" },
             { c: "fan", icon: "💖", t: "スタッフの「推し」を作る", d: "スタッフそれぞれにおすすめドリンクを持たせ、メニューに「〇〇の推し」と記載。会話のきっかけになる。" },
@@ -830,6 +888,20 @@
             { c: "staff", icon: "🤝", t: "身だしなみの基準", d: "清潔感は絶対。髪型、爪、制服の汚れ。スタッフ同士でチェックし合う。" },
             { c: "staff", icon: "🤝", t: "予約電話の対応", d: "電話対応の声のトーンは「ソ」の音で明るく。顔が見えない分、声で歓迎を伝える。" },
             { c: "staff", icon: "🤝", t: "楽しむこと", d: "店長やスタッフが楽しんでいない店にお客様は来ない。まずは自分が最高に楽しむこと。" }
+        ];
+
+        // Service Quotes
+        const serviceQuotes = [
+            { t: "接客とは、お客様の時間を預かることである。", a: "サービス精神" },
+            { t: "お客様は神様ではない。大切な友人として接せよ。", a: "接客の心得" },
+            { t: "最高のサービスは、お客様が望む前に提供すること。", a: "プロの意識" },
+            { t: "笑顔は0円だが、プライスレスな価値がある。", a: "基本のキ" },
+            { t: "一期一会。その一杯が、一生の思い出になるかもしれない。", a: "茶道の心" },
+            { t: "常連客とは、あなたのファンではなく、あなたのお店のファンである。", a: "店舗経営" },
+            { t: "クレームは「期待」の裏返し。諦められたら何も言われない。", a: "成長の種" },
+            { t: "準備8割、現場2割。最高のおもてなしは準備で決まる。", a: "プロの仕事" },
+            { t: "「また来るね」その一言のために、我々はここにいる。", a: "私たちの使命" },
+            { t: "忙しい時こそ、丁寧さを忘れない。それがプロフェッショナル。", a: "心の余裕" }
         ];
 
         // Event Data
@@ -895,7 +967,9 @@
             loadSettings();
             updateGreeting();
             initSeasonalSelects();
-            initHints('all'); // 初期表示は全て
+            initHints('all'); 
+            initTips(); 
+            drawQuote(); // Quote Init
             generateQR();
             initHaptics();
             recommendAction();
@@ -1073,7 +1147,9 @@
             document.getElementById('tab-'+id).style.display='block';
             document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
             el.classList.add('active');
-            window.scrollTo(0,0);
+            
+            // スクロールリセット (Fix for main scrolling)
+            document.querySelector('main').scrollTop = 0;
         }
 
         function toggleAcc(btn) {
@@ -1085,6 +1161,12 @@
         function toggleHint(el) {
             el.classList.toggle('open');
             if(navigator.vibrate) navigator.vibrate(10);
+            
+            if (el.classList.contains('open')) {
+                setTimeout(() => {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+            }
         }
 
         function toggleTip(card) {
@@ -1106,6 +1188,9 @@
             // UI Update
             document.querySelectorAll('.hint-cat-chip').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
+            
+            // Scroll to top
+            document.querySelector('main').scrollTop = 0;
             
             initHints(cat);
             if(navigator.vibrate) navigator.vibrate(10);
@@ -1145,6 +1230,156 @@
             const snsBtn = document.querySelector(".nav-btn"); 
             if (snsBtn) {
                 switchTab('sns', snsBtn);
+            }
+        }
+
+        // --- Quote Logic ---
+        function drawQuote() {
+            if(navigator.vibrate) navigator.vibrate(10);
+            const q = serviceQuotes[Math.floor(Math.random() * serviceQuotes.length)];
+            const textEl = document.getElementById('quote-text');
+            const authorEl = document.getElementById('quote-author');
+            
+            if (textEl && authorEl) {
+                textEl.innerText = q.t;
+                authorEl.innerText = '- ' + q.a;
+            }
+        }
+
+        // --- Photo/Video Tips Initialization ---
+        function initTips() {
+            const photoIdeas = [
+                {
+                    icon: 'fa-mobile-screen-button',
+                    title: '裏技：「逆さスマホ」で迫力を出す',
+                    desc: `
+                        <ul>
+                            <li>スマホを逆さまに持ち替える</li>
+                            <li>カメラレンズをテーブル面スレスレに配置</li>
+                            <li>少し上向き（アオリ）でシャッターを切る</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> 天井が高く映り、ドリンクや料理が塔のように立派に見えます！</div>`
+                },
+                {
+                    icon: 'fa-magnifying-glass-plus',
+                    title: '基本：「2倍ズーム」で形を整える',
+                    desc: `
+                        <ul>
+                            <li>スマホの標準（1x）ではなく「2x」か「3x」にする</li>
+                            <li>その分、被写体から少し離れて撮影する</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> グラスや皿の歪みがなくなり、プロが一眼レフで撮ったような端正な形になります。</div>`
+                },
+                {
+                    icon: 'fa-bullseye',
+                    title: '構図：「前ボケ」で賑わいを演出',
+                    desc: `
+                        <ul>
+                            <li>手前に「誰かの肩」や「グラス」を少し見切れさせる</li>
+                            <li>奥のダーツ盤にピントを固定（画面長押し）する</li>
+                            <li>あえて手前をボカして撮影</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> 「盗み撮り」のような自然なアングルになり、その場の臨場感が伝わります。</div>`
+                },
+                {
+                    icon: 'fa-utensils',
+                    title: '照明：「斜め逆光」でシズル感を',
+                    desc: `
+                        <ul>
+                            <li>店内の照明が、料理の「斜め後ろ」に来る席を選ぶ</li>
+                            <li>または、友人のスマホライトを斜め後ろから当ててもらう</li>
+                            <li>露出（明るさ）を少し下げて撮影</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> 表面のテカリや湯気が強調され、圧倒的に美味しそうに撮れます。</div>`
+                }
+            ];
+
+            const videoIdeas = [
+                {
+                    icon: 'fa-video',
+                    title: '動画：「ゆっくりパン」で空間紹介',
+                    desc: `
+                        <ul>
+                            <li>脇を締めてスマホを両手で持つ</li>
+                            <li>体ごとゆっくり横に回転する（足は動かさない）</li>
+                            <li>「遅すぎるかな？」と思うくらいのスピードで</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> 店内の広がりや雰囲気が伝わります。手ブレ補正は必ずONに！</div>`
+                },
+                {
+                    icon: 'fa-glass-water',
+                    title: '動画：「シズル感」一点突破',
+                    desc: `
+                        <ul>
+                            <li>炭酸が弾ける様子や、湯気が立つ様子をアップで撮る</li>
+                            <li>スマホを固定し、絶対に動かさない（フィックス撮影）</li>
+                            <li>3秒〜5秒程度の短尺でOK</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> 「美味しそう！」と直感的に伝わるのは、実は動かない固定動画です。</div>`
+                },
+                {
+                    icon: 'fa-bullseye',
+                    title: '動画：ダーツが刺さる「音」を撮る',
+                    desc: `
+                        <ul>
+                            <li>ボードの近くから、刺さる瞬間を狙う</li>
+                            <li>「トンッ」という心地よい音を収録する</li>
+                            <li>投げた人の歓声まで入れる</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> 音は映像以上に現場の熱量を伝えます。リール動画に最適です。</div>`
+                },
+                {
+                    icon: 'fa-mug-hot',
+                    title: '動画：「湯気/注ぎ」の瞬間',
+                    desc: `
+                        <ul>
+                            <li>ドリンクを注ぐ、ソースをかける瞬間を撮る</li>
+                            <li>スローモーション機能を使ってみる</li>
+                        </ul>
+                        <div class="photo-chip-point"><i class="fa-regular fa-lightbulb"></i> 動きのある映像は、タイムラインで指を止めさせる効果絶大です。</div>`
+                }
+            ];
+
+            // Render Photo Tips
+            const photoContainer = document.getElementById('tips-content-photo');
+            photoContainer.innerHTML = photoIdeas.map(idea => `
+                <div class="photo-chip">
+                    <div class="photo-chip-header">
+                        <i class="fa-solid ${idea.icon}"></i>
+                        <span>${idea.title}</span>
+                    </div>
+                    <div class="photo-chip-desc">${idea.desc}</div>
+                </div>
+            `).join('');
+
+            // Render Video Tips
+            const videoContainer = document.getElementById('tips-content-video');
+            videoContainer.innerHTML = videoIdeas.map(idea => `
+                <div class="photo-chip">
+                    <div class="photo-chip-header">
+                        <i class="fa-solid ${idea.icon}"></i>
+                        <span>${idea.title}</span>
+                    </div>
+                    <div class="photo-chip-desc">${idea.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function switchTipsTab(type) {
+            const photoContent = document.getElementById('tips-content-photo');
+            const videoContent = document.getElementById('tips-content-video');
+            const buttons = document.querySelectorAll('.sub-tab-btn');
+
+            if (type === 'photo') {
+                photoContent.style.display = 'flex';
+                videoContent.style.display = 'none';
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                photoContent.style.display = 'none';
+                videoContent.style.display = 'flex';
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
             }
         }
 
